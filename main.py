@@ -1,16 +1,46 @@
-# This is a sample Python script.
+import sys
+import random
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from PyQt5.QtCore import QPoint
+from PyQt5.QtGui import QPainter, QColor
+from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
 
 
-# Press the green button in the gutter to run the script.
+class MyWidget(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.do_paint = False
+        uic.loadUi('UI.ui', self)
+        self.setupUi()
+
+    def setupUi(self):
+        self.pushButton.clicked.connect(self.new_round)
+
+    def new_round(self):
+        self.do_paint = True
+        self.update()
+
+    def paintEvent(self, event):
+        if self.do_paint:
+            qp = QPainter()
+            qp.begin(self)
+            self.draw_round(qp)
+            qp.end()
+        self.do_paint = False
+
+    def draw_round(self, qp):
+        qp.setBrush(QColor(255, 255, 0))
+        qp.setPen(QColor(255, 255, 0))
+        for i in range(7):
+            a = random.randint(1, 100)
+            x = random.randint(0, self.size().width())
+            y = random.randint(0, self.size().height())
+            qp.drawEllipse(x, y, a, a)
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    app = QApplication(sys.argv)
+    ex = MyWidget()
+    ex.show()
+    sys.exit(app.exec_())
